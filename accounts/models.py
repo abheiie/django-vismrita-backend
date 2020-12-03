@@ -45,3 +45,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Contact(models.Model):
+    owner = models.ForeignKey(
+        User, related_name='followings', on_delete=models.CASCADE)
+    following = models.ForeignKey(
+        User, related_name='followers', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('owner', 'following')
+
+    def __str__(self):
+        return u'%s follows %s' % (self.owner.username, self.following.username)
