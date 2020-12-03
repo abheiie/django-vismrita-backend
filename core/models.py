@@ -10,8 +10,8 @@ class Category(models.Model):
 
 class Post(models.Model):
     content = models.TextField()
-    category = models.ForeignKey(Category, related_name='categories', null=True, blank = True, on_delete=models.SET_NULL)
-    creator = models.ForeignKey(User, related_name='creators', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='posts', null=True, blank = True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -24,7 +24,7 @@ class Post(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -34,11 +34,11 @@ class Like(models.Model):
         ordering = ['updated_at']
 
     def __str__(self):
-        return self.post
+        return str(self.id)
 
 
 class Bookmark(models.Model):
-    user = models.ForeignKey(User, related_name='bookmarks', on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name='bookmarks', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='bookmarks', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -48,12 +48,12 @@ class Bookmark(models.Model):
         ordering = ['updated_at']
 
     def __str__(self):
-        return self.post
+        return str(self.id)
 
 
 class Comment(models.Model):
     content = models.CharField(max_length=500, null=True, blank=True)
-    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -63,7 +63,7 @@ class Comment(models.Model):
         ordering = ['updated_at']
 
     def __str__(self):
-        return self.post
+        return self.content
 
 # class ReportType(models.Model):
 #     detail=models.CharField(max_length=200, null=True, blank=True)
